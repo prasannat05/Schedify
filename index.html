@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Study Organizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .screen {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .card {
+            background: #f8f9ff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-left: 4px solid #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .subjects-list {
+            max-height: 250px;
+            overflow-y: auto;
+            margin-bottom: 24px;
+        }
+        
+        .subject-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .subject-info h4 {
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .subject-meta {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .delete-btn {
+            background: #ff4757;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            padding: 0;
+        }
+        
+        .plan-day {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 5px solid #4ecdc4;
+        }
+        
+        .day-header {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        
+        .session-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .session-info {
+            flex: 1;
+        }
+        
+        .session-checkbox {
+            margin-left: 12px;
+        }
+        
+        .efficiency {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border-radius: 16px;
+        }
+        
+        .total-hours {
+            font-weight: bold;
+            color: #27ae60;
+            font-size: 18px;
+        }
+        
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { margin: 10px; border-radius: 16px; }
+            .screen { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Screen 1: Weekly Setup -->
+        <div id="screen1" class="screen active">
+            <h1>📚 Weekly Study Setup</h1>
+            
+            <div class="card">
+                <div class="input-group">
+                    <label>Daily Spare Time (hours)</label>
+                    <input type="number" id="spareTime" step="0.5" placeholder="e.g. 4.5" value="3">
+                </div>
+                
+                <div class="input-group">
+                    <label>Max Subjects Per Day</label>
+                    <input type="number" id="maxSubjects" placeholder="e.g. 3" value="3">
+                </div>
+            </div>
+            
+            <button onclick="showScreen2()">Next → Add Subjects</button>
+        </div>
+
+        <!-- Screen 2: Subject Entry -->
+        <div id="screen2" class="screen">
+            <h1>📖 Add Your Subjects</h1>
+            
+            <div class="card">
+                <div class="input-group">
+                    <label>Subject Name</label>
+                    <input type="text" id="subjectName" placeholder="e.g. Mathematics">
+                </div>
+                
+                <div class="input-group">
+                    <label>Weekly Study Hours</label>
+                    <input type="number" id="weeklyHours" step="0.5" placeholder="e.g. 6">
+                </div>
+                
+                <div class="input-group">
+                    <label>Difficulty (1-5)</label>
+                    <select id="difficulty">
+                        <option value="1">1 - Very Easy</option>
+                        <option value="2">2 - Easy</option>
+                        <option value="3" selected>3 - Medium</option>
+                        <option value="4">4 - Hard</option>
+                        <option value="5">5 - Very Hard</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>Priority</label>
+                    <select id="priority">
+                        <option value="Low">Low</option>
+                        <option value="Medium" selected>Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                
+                <button onclick="addSubject()">➕ Add Subject</button>
+            </div>
+            
+            <div id="subjectsList" class="subjects-list"></div>
+            
+            <button onclick="generateSchedule()">🎯 Generate Weekly Plan</button>
+            <button onclick="showScreen1()" style="background: #95a5a6;">← Back</button>
+        </div>
+
+        <!-- Screen 3: Study Plan -->
+        <div id="screen3" class="screen">
+            <h1>📊 Your Weekly Plan</h1>
+            
+            <div id="efficiency" class="efficiency">Weekly Efficiency: 0%</div>
+            
+            <div id="planContent"></div>
+            
+            <button onclick="showScreen2()">✏️ Back to Edit Plan</button>
+        </div>
+    </div>
+
+    <script>
+        // Global data
+        let dailySpareTime = 3;
+        let maxSubjectsPerDay = 3;
+        let subjects = [];
+        let schedule = {};
+        let totalSessions = 0;
+        let completedSessions = 0;
+
+        // Screen navigation
+        function showScreen(screenNum) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(`screen${screenNum}`).classList.add('active');
+        }
+
+        function showScreen1() { showScreen(1); }
+        function showScreen2() {
+            dailySpareTime = parseFloat(document.getElementById('spareTime').value) || 3;
+            maxSubjectsPerDay = parseInt(document.getElementById('maxSubjects').value) || 3;
+            showScreen(2);
+        }
+        function showScreen3() { showScreen(3); updateEfficiency(); }
+
+        // Subject management
+        function addSubject() {
+            const name = document.getElementById('subjectName').value.trim();
+            const hours = parseFloat(document.getElementById('weeklyHours').value) || 0;
+            const difficulty = parseFloat(document.getElementById('difficulty').value);
+            const priority = document.getElementById('priority').value;
+
+            if (name && hours > 0) {
+                subjects.push({ name, weeklyHours: hours, difficulty, priority });
+                renderSubjectsList();
+                clearSubjectForm();
+                updateEfficiency();
+            }
+        }
+
+        function clearSubjectForm() {
+            document.getElementById('subjectName').value = '';
+            document.getElementById('weeklyHours').value = '';
+            document.getElementById('difficulty').value = '3';
+            document.getElementById('priority').value = 'Medium';
+        }
+
+        function renderSubjectsList() {
+            const container = document.getElementById('subjectsList');
+            container.innerHTML = subjects.map((subj, index) => `
+                <div class="subject-item">
+                    <div class="subject-info">
+                        <h4>${subj.name}</h4>
+                        <div class="subject-meta">
+                            ${subj.weeklyHours}h/week • Diff: ${subj.difficulty} • ${subj.priority}
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteSubject(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteSubject(index) {
+            subjects.splice(index, 1);
+            renderSubjectsList();
+            updateEfficiency();
+        }
+
+        // CORE SCHEDULING LOGIC - SAME AS ANDROID
+        function generateSchedule() {
+            if (subjects.length === 0) return alert('Add at least one subject!');
+
+            schedule = {};
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+            // 1. Calculate loads and sort (highest first)
+            const subjectsWithLoad = subjects.map(subj => {
+                const multiplier = { 'Low': 1.0, 'Medium': 1.3, 'High': 1.6 }[subj.priority];
+                const load = subj.weeklyHours * subj.difficulty * multiplier;
+                return { subj, load };
+            }).sort((a, b) => b.load - a.load);
+
+            // 2. Distribute sessions across days
+            subjectsWithLoad.forEach(({ subj }) => {
+                let remainingSessions = Math.ceil(subj.weeklyHours);
+
+                for (let day of days) {
+                    if (remainingSessions <= 0) break;
+
+                    schedule[day] = schedule[day] || [];
+                    const daySchedule = schedule[day];
+                    
+                    const availableSlots = maxSubjectsPerDay - daySchedule.length;
+                    const currentDayHours = daySchedule.reduce((sum, item) => sum + item.hours, 0);
+                    const availableHours = dailySpareTime - currentDayHours;
+
+                    if (availableSlots > 0 && availableHours >= 1) {
+                        const sessionsToday = Math.min(
+                            remainingSessions,
+                            Math.floor(availableHours),
+                            1  // Max 1 session per subject per day
+                        );
+
+                        if (sessionsToday > 0) {
+                            daySchedule.push({
+                                subject: subj,
+                                hours: sessionsToday,
+                                completed: false
+                            });
+                            remainingSessions -= sessionsToday;
+                        }
+                    }
+                }
+            });
+
+            renderSchedule();
+            showScreen3();
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById('planContent');
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            
+            let html = '';
+            totalSessions = 0;
+
+            days.forEach(day => {
+                const daySchedule = schedule[day] || [];
+                if (daySchedule.length > 0) {
+                    let dayTotal = 0;
+                    html += `<div class="plan-day">
+                        <div class="day-header">${day}</div>`;
+                    
+                    daySchedule.forEach(item => {
+                        html += `
+                            <div class="session-item">
+                                <div class="session-info">
+                                    <strong>${item.subject.name}</strong> – ${item.hours} hour${item.hours > 1 ? 's' : ''}
+                                </div>
+                                <label class="session-checkbox">
+                                    <input type="checkbox" ${item.completed ? 'checked' : ''} 
+                                           onchange="toggleComplete('${day}', '${item.subject.name}', ${item.hours})">
+                                    ✓
+                                </label>
+                            </div>`;
+                        totalSessions += item.hours;
+                        dayTotal += item.hours;
+                    });
+                    
+                    html += `<div class="total-hours">Total: ${dayTotal} hour${dayTotal > 1 ? 's' : ''}</div>
+                        </div>`;
+                }
+            });
+
+            container.innerHTML = html || '<p style="text-align:center;color:#666;">No sessions scheduled</p>';
+        }
+
+        function toggleComplete(day, subjectName, hours) {
+            const daySchedule = schedule[day];
+            const item = daySchedule.find(s => s.subject.name === subjectName);
+            if (item) {
+                item.completed = !item.completed;
+                updateEfficiency();
+                renderSchedule(); // Re-render to update checkboxes
+            }
+        }
+
+        function updateEfficiency() {
+            completedSessions = 0;
+            Object.values(schedule).forEach(daySchedule => {
+                daySchedule.forEach(item => {
+                    if (item.completed) completedSessions += item.hours;
+                });
+            });
+            
+            const efficiency = totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0;
+            document.getElementById('efficiency').textContent = `Weekly Efficiency: ${efficiency}%`;
+            
+            // Color based on efficiency
+            const efficiencyEl = document.getElementById('efficiency');
+            if (efficiency >= 80) {
+                efficiencyEl.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+            } else if (efficiency >= 50) {
+                efficiencyEl.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+            } else {
+                efficiencyEl.style.background = 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)';
+            }
+        }
+
+        // Enter key support
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('screen2').classList.contains('active')) {
+                    addSubject();
+                }
+            }
+        });
+
+        // Auto-save progress to localStorage
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('studyOrganizer', JSON.stringify({
+                subjects,
+                schedule,
+                dailySpareTime,
+                maxSubjectsPerDay
+            }));
+        });
+
+        // Load saved data
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('studyOrganizer');
+            if (saved) {
+                const data = JSON.parse(saved);
+                subjects = data.subjects || [];
+                dailySpareTime = data.dailySpareTime || 3;
+                maxSubjectsPerDay = data.maxSubjectsPerDay || 3;
+                document.getElementById('spareTime').value = dailySpareTime;
+                document.getElementById('maxSubjects').value = maxSubjectsPerDay;
+                if (subjects.length > 0) renderSubjectsList();
+            }
+        });
+    </script>
+</body>
+</html>
