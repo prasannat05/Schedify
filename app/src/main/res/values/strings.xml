@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Schedify</string>
+    <string-array name="priority_options">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+</resources>
