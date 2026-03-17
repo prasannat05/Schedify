@@ -1,7 +1,7 @@
 # Schedify – Smart Study Planner
 
 <p align="center">
-  <b>A smart, constraint-based study planner that optimizes your schedule and boosts productivity 🚀</b>
+  <b>A smart, constraint-based study planner that optimizes your schedule and boosts productivity </b>
 </p>
 
 <p align="center">
@@ -36,7 +36,6 @@
   - Priority (Low, Medium, High)  
 - **Dynamic Dashboard** – Auto-generated weekly schedule  
 
-
 ### Smart Scheduling Algorithm
 - Load = Weekly Hours × Difficulty × Priority Multiplier
 
@@ -44,9 +43,6 @@
 - High → 1.6  
 - Medium → 1.3  
 - Low → 1.0  
-
-✔ Prioritizes important and difficult subjects  
-✔ Balances workload intelligently  
 
 ### Constraint-Based Planning
 - Daily Study Goal  
@@ -136,5 +132,5 @@ This project is licensed under the MIT License.
 
 ## Author
 
-**Prasanna**
+**Prasanna T**
 
