@@ -11,8 +11,6 @@
   <img src="https://img.shields.io/badge/UI-Dark%20Glow-black?style=for-the-badge">
 </p>
 
----
-
 ## Screenshots
 
 <p align="center">
@@ -26,8 +24,6 @@
   <img src="assets/settings.png" width="250"/>
 </p>
 
----
-
 ## Features
 
 ### Three-Tier Navigation
@@ -38,8 +34,6 @@
   - Priority (Low, Medium, High)  
 - Dynamic Dashboard – Auto-generated weekly schedule  
 
----
-
 ### Smart Scheduling Algorithm
 
 Load = Weekly Hours × Difficulty × Priority Multiplier
@@ -49,16 +43,12 @@ Load = Weekly Hours × Difficulty × Priority Multiplier
 - Medium → 1.3  
 - Low → 1.0  
 
----
-
 ### Constraint-Based Planning
 - Daily Study Goal  
 - Max Subjects Per Day  
 - No repetition of the same subject per day  
 
 Ensures balanced workload and prevents burnout.
-
----
 
 ### Efficiency Tracking
 
@@ -68,22 +58,16 @@ Efficiency (%) = (Completed Sessions / Total Sessions) × 100
 - Animated progress bar  
 - Continuous productivity feedback  
 
----
-
 ### Persistent Storage (SQLite)
 - Subjects  
 - Schedule  
 - Completion status  
 - User configurations  
 
----
-
 ### Modern UI – Dark Glow Theme
 - Minimal dark interface  
 - Smooth transitions and animations  
 - Clean and focused design  
-
----
 
 ## Installation
 
@@ -98,8 +82,6 @@ https://tinyurl.com/Schedify
 
 > Enable "Install from Unknown Sources" in your device settings.
 
----
-
 ## Tech Stack
 
 | Category       | Technology                          |
@@ -110,8 +92,6 @@ https://tinyurl.com/Schedify
 | Animations    | ObjectAnimator, TransitionManager  |
 | Architecture  | Modular Android Design             |
 
----
-
 ## How It Works
 
 1. Add subjects with preferences  
@@ -120,16 +100,12 @@ https://tinyurl.com/Schedify
 4. Track daily completion  
 5. Improve efficiency over time  
 
----
-
 ## Use Cases
 
 - Exam preparation  
 - Time management  
 - Productivity tracking  
 - Structured study planning  
-
----
 
 ## Future Enhancements
 
@@ -139,13 +115,9 @@ https://tinyurl.com/Schedify
 - AI-based scheduling improvements  
 - Pomodoro timer integration  
 
----
-
 ## License
 
 This project is licensed under the MIT License.
-
----
 
 ## Author
 
