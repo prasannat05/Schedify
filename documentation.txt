@@ -1,0 +1,59 @@
+# Schedify: Smart Study Planner - Documentation
+
+## 1. Core Features
+
+### A. Three-Tiered Navigation
+* **Home Screen:** A branded landing page featuring the custom "Schedify" logo, providing quick access to either the subject management area or the active schedule.
+* **Subject Management:** A dedicated interface for users to build their curriculum. Users can input subject names, target weekly hours, difficulty levels (1-5), and priority (Low, Medium, High).
+* **Dynamic Dashboard:** A central hub that displays the generated weekly schedule. It includes an interactive "Efficiency" tracker that updates in real-time as tasks are completed.
+
+### B. Persistent Storage (SQLite)
+* The app uses a local SQLite database to ensure data persists across app restarts.
+* **Data Saved:** User configurations, the full list of subjects, the generated weekly plan, and the completion status of every individual session.
+
+### C. Configuration & Settings
+* **Personalized Constraints:** Users can define their "Daily Study Goal" (hours) and "Max Subjects Per Day" to prevent burnout.
+* **Data Management:** Includes a "Clear All Data" function to reset the curriculum and start fresh.
+
+### D. Modern "Dark Glow" UI
+* **Visual Style:** A deep-slate dark mode palette with neon indigo and cyan accents.
+* **Glow Effects:** Programmatic shadow layers and stroke gradients on cards and titles to create a high-tech, modern aesthetic.
+
+---
+
+## 2. Core Logic & Algorithms
+
+### A. The "Load" Calculation
+To prioritize subjects effectively, the app calculates a Load value for every subject using the following formula:
+Load = Weekly Hours * Difficulty * Priority Multiplier
+* **Priority Multipliers:** High (1.6), Medium (1.3), Low (1.0).
+* **Purpose:** This ensures that harder, high-priority subjects are prioritized during the schedule generation process.
+
+### B. Schedule Generation Algorithm
+The `generateSchedule()` function uses a constrained greedy approach:
+1. **Sorting:** Subjects are sorted in descending order based on their Load value.
+2. **Allocation:** The algorithm iterates through each subject and attempts to find available slots in the 7-day week.
+3. **Constraint Checking:** A session is only added to a specific day if:
+    * The total sessions for that day haven't exceeded the Max Subjects Per Day limit.
+    * The total hours for that day (1 hour per session) don't exceed the Daily Spare Time goal.
+    * The subject hasn't already been scheduled for that specific day (to ensure variety).
+4. **Completion:** The process continues until all weekly hours are fulfilled or all available time slots are exhausted.
+
+### C. Efficiency Tracking
+Efficiency % = (Completed Sessions / Total Planned Sessions) * 100
+* This is recalculated every time a checkbox is toggled and is visualized using an animated ProgressBar.
+
+---
+
+## 3. Technical Functionality
+* **Screen Transitions:** Uses Android’s TransitionManager with AutoTransition to provide smooth, animated fades between the Home, Entry, and Dashboard layouts.
+* **Back Navigation:** Implements the modern OnBackPressedDispatcher to handle hierarchical navigation.
+* **Dynamic View Construction:** Schedule cards and subject lists are built programmatically in Kotlin.
+* **Property Animation:** Uses ObjectAnimator for the efficiency bar to provide a fluid, premium feel.
+
+---
+
+## 4. Database Schema
+* **config table:** Stores spare_time and max_subjects.
+* **subjects table:** Stores name, hours, difficulty, and priority.
+* **schedule table:** Stores subject_name, day, and a boolean completed flag.

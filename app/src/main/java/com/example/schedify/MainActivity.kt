@@ -2,20 +2,20 @@ package com.example.schedify
 
 import android.animation.ObjectAnimator
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
+import java.util.Locale
 import kotlin.math.ceil
 
 data class Subject(
@@ -40,17 +40,18 @@ data class StudySession(
 
 class MainActivity : AppCompatActivity() {
 
-    // Main Container for Transitions
+    private lateinit var db: DatabaseHelper
     private lateinit var mainRoot: ViewGroup
 
-    // Screen Layouts
-    private lateinit var layoutSetup: View
+    // Screens
+    private lateinit var layoutHome: View
     private lateinit var layoutSubjectEntry: View
     private lateinit var layoutDashboard: View
+    private lateinit var layoutSettings: View
 
-    // Setup Screen Views
-    private lateinit var etDailySpareTime: TextInputEditText
-    private lateinit var etMaxSubjectsPerDay: TextInputEditText
+    // Home Views
+    private lateinit var btnGoToSubjects: Button
+    private lateinit var btnViewSchedule: Button
 
     // Subject Entry Views
     private lateinit var etSubjectName: EditText
@@ -66,9 +67,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvEfficiency: TextView
     private lateinit var pbEfficiency: ProgressBar
 
+    // Settings Views
+    private lateinit var etSettingsSpareTime: TextInputEditText
+    private lateinit var etSettingsMaxSubs: TextInputEditText
+
     // Data
-    private var dailySpareTime: Double = 0.0
-    private var maxSubjectsPerDay: Int = 0
+    private var dailySpareTime: Double = 4.0
+    private var maxSubjectsPerDay: Int = 3
     private val subjects = mutableListOf<Subject>()
     private val schedule = mutableListOf<StudySession>()
 
@@ -78,22 +83,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        db = DatabaseHelper(this)
         initViews()
+        loadDataFromDb()
         setupListeners()
+        setupBackNavigation()
         
-        // Simple entrance animation for the first screen
-        layoutSetup.alpha = 0f
-        layoutSetup.animate().alpha(1f).setDuration(800).start()
+        showScreen(layoutHome)
     }
 
     private fun initViews() {
         mainRoot = findViewById(R.id.main)
-        layoutSetup = findViewById(R.id.layoutSetup)
+        layoutHome = findViewById(R.id.layoutHome)
         layoutSubjectEntry = findViewById(R.id.layoutSubjectEntry)
         layoutDashboard = findViewById(R.id.layoutDashboard)
+        layoutSettings = findViewById(R.id.layoutSettings)
 
-        etDailySpareTime = findViewById(R.id.etDailySpareTime)
-        etMaxSubjectsPerDay = findViewById(R.id.etMaxSubjectsPerDay)
+        btnGoToSubjects = findViewById(R.id.btnGoToSubjects)
+        btnViewSchedule = findViewById(R.id.btnViewSchedule)
 
         etSubjectName = findViewById(R.id.etSubjectName)
         etWeeklyHours = findViewById(R.id.etWeeklyHours)
@@ -106,25 +113,59 @@ class MainActivity : AppCompatActivity() {
         tvTotalCompleted = findViewById(R.id.tvTotalCompleted)
         tvEfficiency = findViewById(R.id.tvEfficiency)
         pbEfficiency = findViewById(R.id.pbEfficiency)
+
+        etSettingsSpareTime = findViewById(R.id.etSettingsSpareTime)
+        etSettingsMaxSubs = findViewById(R.id.etSettingsMaxSubs)
+    }
+
+    private fun loadDataFromDb() {
+        val config = db.getConfig()
+        dailySpareTime = config.first
+        maxSubjectsPerDay = config.second
+        etSettingsSpareTime.setText(dailySpareTime.toString())
+        etSettingsMaxSubs.setText(maxSubjectsPerDay.toString())
+
+        subjects.clear()
+        subjects.addAll(db.getSubjects())
+        llSubjectList.removeAllViews()
+        subjects.forEach { addSubjectToListView(it) }
+
+        schedule.clear()
+        schedule.addAll(db.getSchedule())
+        if (schedule.isNotEmpty()) {
+            displayDashboard()
+        }
     }
 
     private fun setupListeners() {
-        findViewById<Button>(R.id.btnContinueToSubjects).setOnClickListener {
-            val spareTimeStr = etDailySpareTime.text.toString()
-            val maxSubsStr = etMaxSubjectsPerDay.text.toString()
+        findViewById<ImageButton>(R.id.btnSettings).setOnClickListener {
+            layoutSettings.isVisible = !layoutSettings.isVisible
+        }
 
-            if (spareTimeStr.isNotEmpty() && maxSubsStr.isNotEmpty()) {
-                dailySpareTime = spareTimeStr.toDouble()
-                maxSubjectsPerDay = maxSubsStr.toInt()
-
-                if (dailySpareTime > 0 && maxSubjectsPerDay > 0) {
-                    animateTransition(layoutSubjectEntry)
-                } else {
-                    showToast("Values must be greater than zero")
-                }
-            } else {
-                showToast("Please fill all configuration fields")
+        findViewById<Button>(R.id.btnSaveSettings).setOnClickListener {
+            val timeStr = etSettingsSpareTime.text.toString()
+            val maxStr = etSettingsMaxSubs.text.toString()
+            if (timeStr.isNotEmpty() && maxStr.isNotEmpty()) {
+                dailySpareTime = timeStr.toDouble()
+                maxSubjectsPerDay = maxStr.toInt()
+                db.saveConfig(dailySpareTime, maxSubjectsPerDay)
+                layoutSettings.isVisible = false
+                showToast("Configuration Saved")
             }
+        }
+
+        findViewById<Button>(R.id.btnClearData).setOnClickListener {
+            db.clearSubjects()
+            loadDataFromDb()
+            layoutSettings.isVisible = false
+            showScreen(layoutHome)
+            showToast("All Data Cleared")
+        }
+
+        btnGoToSubjects.setOnClickListener { showScreen(layoutSubjectEntry) }
+        btnViewSchedule.setOnClickListener {
+            if (schedule.isNotEmpty()) showScreen(layoutDashboard)
+            else showToast("Generate a schedule first")
         }
 
         findViewById<Button>(R.id.btnAddSubject).setOnClickListener {
@@ -134,15 +175,11 @@ class MainActivity : AppCompatActivity() {
             val priority = spnPriority.selectedItem.toString()
 
             if (name.isNotEmpty() && hoursStr.isNotEmpty()) {
-                val hours = hoursStr.toDouble()
-                if (hours > 0) {
-                    val subject = Subject(name, hours, difficulty, priority)
-                    subjects.add(subject)
-                    addSubjectToListViewAnimated(subject)
-                    clearSubjectInputs()
-                } else {
-                    showToast("Study hours must be positive")
-                }
+                val subject = Subject(name, hoursStr.toDouble(), difficulty, priority)
+                subjects.add(subject)
+                db.addSubject(subject)
+                addSubjectToListView(subject)
+                clearSubjectInputs()
             } else {
                 showToast("Please enter subject details")
             }
@@ -151,219 +188,135 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnGeneratePlan).setOnClickListener {
             if (subjects.isNotEmpty()) {
                 generateSchedule()
-                animateTransition(layoutDashboard)
-                displayDashboardAnimated()
+                db.saveSchedule(schedule)
+                displayDashboard()
+                showScreen(layoutDashboard)
             } else {
-                showToast("Add at least one subject to generate a plan")
+                showToast("Add subjects first")
             }
         }
-
-        findViewById<Button>(R.id.btnReset).setOnClickListener {
-            subjects.clear()
-            schedule.clear()
-            llSubjectList.removeAllViews()
-            animateTransition(layoutSetup)
-        }
     }
 
-    private fun animateTransition(newLayout: View) {
-        val transition = AutoTransition()
-        transition.duration = 500
-        transition.interpolator = AccelerateDecelerateInterpolator()
-        
-        TransitionManager.beginDelayedTransition(mainRoot, transition)
-        
-        layoutSetup.visibility = View.GONE
-        layoutSubjectEntry.visibility = View.GONE
-        layoutDashboard.visibility = View.GONE
-        newLayout.visibility = View.VISIBLE
+    private fun setupBackNavigation() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (layoutSettings.isVisible) {
+                    layoutSettings.isVisible = false
+                } else if (!layoutHome.isVisible) {
+                    showScreen(layoutHome)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun showScreen(screen: View) {
+        TransitionManager.beginDelayedTransition(mainRoot, AutoTransition())
+        layoutHome.isVisible = false
+        layoutSubjectEntry.isVisible = false
+        layoutDashboard.isVisible = false
+        screen.isVisible = true
     }
 
     private fun clearSubjectInputs() {
         etSubjectName.text.clear()
         etWeeklyHours.text.clear()
         sbDifficulty.progress = 2
-        spnPriority.setSelection(0)
-        etSubjectName.requestFocus()
     }
 
-    private fun addSubjectToListViewAnimated(subject: Subject) {
+    private fun addSubjectToListView(subject: Subject) {
         val card = MaterialCardView(this).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(0, 4.dp, 0, 4.dp)
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
+                setMargins(0, 8.dp, 0, 8.dp)
             }
             radius = 16.dp.toFloat()
-            cardElevation = 2.dp.toFloat()
-            setCardBackgroundColor(Color.WHITE)
-            strokeWidth = 0
-            alpha = 0f
-            scaleX = 0.8f
-            scaleY = 0.8f
+            setCardBackgroundColor(ContextCompat.getColor(context, R.color.surface))
+            setStrokeColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.glow_indigo)))
+            strokeWidth = 1.dp
         }
-
         val tv = TextView(this).apply {
-            val content = "${subject.name} \u2022 ${subject.weeklyHours}h \u2022 Load: ${String.format("%.1f", subject.load)}"
-            text = content
+            text = String.format(Locale.getDefault(), "%s \u2022 %.1fh \u2022 Load: %.1f", subject.name, subject.weeklyHours, subject.load)
             setPadding(16.dp, 16.dp, 16.dp, 16.dp)
             setTextColor(ContextCompat.getColor(context, R.color.on_surface))
-            typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
         }
-        
         card.addView(tv)
         llSubjectList.addView(card, 0)
-
-        card.animate()
-            .alpha(1f)
-            .scaleX(1f)
-            .scaleY(1f)
-            .setDuration(400)
-            .setInterpolator(DecelerateInterpolator())
-            .start()
     }
 
     private fun generateSchedule() {
         schedule.clear()
         val sortedSubjects = subjects.sortedByDescending { it.load }
-        
         val dayTimeUsage = mutableMapOf<String, Double>()
-        val daySubjectUsage = mutableMapOf<String, Int>()
         val daySubjectsScheduled = mutableMapOf<String, MutableSet<String>>()
-
         daysOfWeek.forEach { 
             dayTimeUsage[it] = 0.0 
-            daySubjectUsage[it] = 0
             daySubjectsScheduled[it] = mutableSetOf()
         }
 
         for (subject in sortedSubjects) {
             var sessionsToSchedule = ceil(subject.weeklyHours).toInt()
-            val startIndex = sortedSubjects.indexOf(subject) % 7
-            
-            for (i in 0 until 7) {
+            for (day in daysOfWeek) {
                 if (sessionsToSchedule <= 0) break
-                
-                val day = daysOfWeek[(startIndex + i) % 7]
-                val currentTime = dayTimeUsage[day] ?: 0.0
-                val currentSubs = daySubjectUsage[day] ?: 0
-                val scheduledInDay = daySubjectsScheduled[day]
-
-                if (currentSubs < maxSubjectsPerDay && 
-                    currentTime + 1.0 <= dailySpareTime && 
-                    scheduledInDay?.contains(subject.name) == false) {
-                    
+                val currentInDay = daySubjectsScheduled[day]!!
+                if (currentInDay.size < maxSubjectsPerDay && (dayTimeUsage[day] ?: 0.0) + 1.0 <= dailySpareTime) {
                     schedule.add(StudySession(subject.name, day))
-                    dayTimeUsage[day] = currentTime + 1.0
-                    daySubjectUsage[day] = currentSubs + 1
-                    scheduledInDay?.add(subject.name)
+                    dayTimeUsage[day] = (dayTimeUsage[day] ?: 0.0) + 1.0
+                    currentInDay.add(subject.name)
                     sessionsToSchedule--
                 }
             }
         }
     }
 
-    private fun displayDashboardAnimated() {
+    private fun displayDashboard() {
         llWeeklySchedule.removeAllViews()
-        var delay = 100L
-
-        for (day in daysOfWeek) {
+        daysOfWeek.forEach { day ->
             val daySessions = schedule.filter { it.day == day }
             if (daySessions.isNotEmpty()) {
-                
                 val dayTitle = TextView(this).apply {
                     text = day
-                    textSize = 18f
-                    typeface = Typeface.create("sans-serif-black", Typeface.BOLD)
-                    setTextColor(ContextCompat.getColor(context, R.color.primary))
-                    setPadding(8.dp, 24.dp, 0, 12.dp)
-                    alpha = 0f
+                    setTextColor(ContextCompat.getColor(context, R.color.secondary))
+                    setPadding(8.dp, 16.dp, 0, 8.dp)
+                    typeface = Typeface.DEFAULT_BOLD
                 }
                 llWeeklySchedule.addView(dayTitle)
-                dayTitle.animate().alpha(1f).setStartDelay(delay).setDuration(300).start()
-
-                val dayCard = MaterialCardView(this).apply {
-                    layoutParams = LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
-                    ).apply {
-                        setMargins(0, 0, 0, 12.dp)
-                    }
-                    radius = 24.dp.toFloat()
-                    cardElevation = 6.dp.toFloat()
-                    strokeWidth = 0
-                    setCardBackgroundColor(Color.WHITE)
-                    alpha = 0f
-                    translationY = 50f.dp
+                val card = MaterialCardView(this).apply {
+                    radius = 16.dp.toFloat()
+                    setCardBackgroundColor(ContextCompat.getColor(context, R.color.surface))
                 }
-
-                val sessionsLayout = LinearLayout(this).apply {
-                    orientation = LinearLayout.VERTICAL
-                    setPadding(16.dp, 16.dp, 16.dp, 16.dp)
-                }
-
-                for (session in daySessions) {
+                val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+                daySessions.forEach { session ->
                     val cb = CheckBox(this).apply {
                         text = session.subjectName
-                        textSize = 16f
-                        typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-                        setTextColor(ContextCompat.getColor(context, R.color.on_surface))
-                        buttonTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.secondary))
                         isChecked = session.isCompleted
-                        setPadding(12.dp, 16.dp, 12.dp, 16.dp)
-                        setOnCheckedChangeListener { _, isChecked ->
-                            session.isCompleted = isChecked
-                            updateEfficiencyAnimated()
+                        setTextColor(ContextCompat.getColor(context, R.color.on_surface))
+                        setOnCheckedChangeListener { _, checked ->
+                            session.isCompleted = checked
+                            db.updateSessionStatus(session.subjectName, session.day, checked)
+                            updateEfficiency()
                         }
                     }
-                    sessionsLayout.addView(cb)
+                    list.addView(cb)
                 }
-                
-                dayCard.addView(sessionsLayout)
-                llWeeklySchedule.addView(dayCard)
-
-                dayCard.animate()
-                    .alpha(1f)
-                    .translationY(0f)
-                    .setStartDelay(delay + 100L)
-                    .setDuration(500)
-                    .setInterpolator(DecelerateInterpolator())
-                    .start()
-                
-                delay += 150L
+                card.addView(list)
+                llWeeklySchedule.addView(card)
             }
         }
-        updateEfficiencyAnimated()
+        updateEfficiency()
     }
 
-    private fun updateEfficiencyAnimated() {
+    private fun updateEfficiency() {
         val total = schedule.size
         val completed = schedule.count { it.isCompleted }
         val efficiency = if (total > 0) (completed.toDouble() / total * 100).toInt() else 0
-
-        val plannedText = "Planned: $total sessions"
-        val doneText = "Done: $completed"
-        val effText = "Efficiency: $efficiency%"
-        
-        tvTotalPlanned.text = plannedText
-        tvTotalCompleted.text = doneText
-        tvEfficiency.text = effText
-        
-        ObjectAnimator.ofInt(pbEfficiency, "progress", pbEfficiency.progress, efficiency).apply {
-            duration = 600
-            interpolator = AccelerateDecelerateInterpolator()
-            start()
-        }
+        tvEfficiency.text = String.format(Locale.getDefault(), "Efficiency: %d%%", efficiency)
+        tvTotalPlanned.text = String.format(Locale.getDefault(), "Planned: %d", total)
+        tvTotalCompleted.text = String.format(Locale.getDefault(), "Done: %d", completed)
+        ObjectAnimator.ofInt(pbEfficiency, "progress", efficiency).setDuration(500).start()
     }
 
-    private val Int.dp: Int
-        get() = (this * resources.displayMetrics.density).toInt()
-    
-    private val Float.dp: Float
-        get() = (this * resources.displayMetrics.density)
+    private fun showToast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    private val Int.dp: Int get() = (this * resources.displayMetrics.density).toInt()
 }

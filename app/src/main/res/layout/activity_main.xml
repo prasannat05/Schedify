@@ -8,12 +8,12 @@
     android:background="@color/background"
     tools:context=".MainActivity">
 
-    <!-- Header Section -->
+    <!-- Header Section with Glow Gradient -->
     <View
         android:id="@+id/headerBackground"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:background="@color/primary"
+        android:layout_height="160dp"
+        android:background="@drawable/header_gradient"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -21,11 +21,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="48dp"
         android:text="Schedify"
         android:textColor="@color/white"
-        android:textSize="28sp"
+        android:textSize="34sp"
         android:textStyle="bold"
+        android:shadowColor="@color/glow_indigo"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="20"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,111 +37,76 @@
         android:id="@+id/tvAppSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Smart Study Planner"
-        android:textColor="#E0E7FF"
+        android:text="Ultimate Study Planner"
+        android:textColor="#C7D2FE"
         android:textSize="14sp"
+        android:letterSpacing="0.15"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/tvAppTitle"
         app:layout_constraintTop_toBottomOf="@+id/tvAppTitle" />
 
-    <!-- Screen 1: Weekly Setup -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/layoutSetup"
+    <ImageButton
+        android:id="@+id/btnSettings"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_manage"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/tvAppSubtitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvAppTitle" />
+
+    <!-- Screen 1: Home/Logo Screen -->
+    <LinearLayout
+        android:id="@+id/layoutHome"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="-20dp"
+        android:gravity="center"
+        android:orientation="vertical"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerBackground">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_schedify_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:layout_marginTop="16dp"
+            android:text="Welcome Back"
+            android:textColor="@color/on_surface"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGoToSubjects"
+            android:layout_width="200dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="32dp"
+            android:text="Manage Subjects"
+            app:cornerRadius="16dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewSchedule"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="200dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="16dp"
+            android:text="View Schedule"
+            app:cornerRadius="16dp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Daily Constraints"
-                        android:textColor="@color/on_surface"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="16dp"/>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Daily Spare Time (hours)"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:helperText="Available hours per day"
-                        app:startIconDrawable="@android:drawable/ic_menu_recent_history">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etDailySpareTime"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:hint="Max Subjects Per Day"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:helperText="Limits subject variety daily"
-                        app:startIconDrawable="@android:drawable/ic_menu_agenda">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etMaxSubjectsPerDay"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="number" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnContinueToSubjects"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="24dp"
-                        android:text="Next Step"
-                        android:textAllCaps="false"
-                        android:textSize="16sp"
-                        app:cornerRadius="12dp" />
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
     <!-- Screen 2: Subject Entry -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/layoutSubjectEntry"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="-20dp"
+        android:layout_marginTop="-30dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerBackground">
@@ -151,55 +120,61 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
+                app:cardBackgroundColor="@color/surface"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="12dp"
+                app:strokeColor="@color/glow_indigo"
+                app:strokeWidth="1.5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="24dp">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Subject Name"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp">
+                        app:boxStrokeColor="@color/primary"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusTopStart="16dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etSubjectName"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/on_surface" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="16dp"
                         android:hint="Weekly Hours"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusTopStart="12dp">
+                        app:boxStrokeColor="@color/primary"
+                        app:boxCornerRadiusBottomEnd="16dp"
+                        app:boxCornerRadiusBottomStart="16dp"
+                        app:boxCornerRadiusTopEnd="16dp"
+                        app:boxCornerRadiusTopStart="16dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etWeeklyHours"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/on_surface"
                             android:inputType="numberDecimal" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Difficulty (1-5)"
+                        android:layout_marginTop="20dp"
+                        android:text="Difficulty"
                         android:textColor="@color/text_secondary"
                         android:textSize="14sp" />
 
@@ -210,13 +185,13 @@
                         android:max="4"
                         android:progress="2"
                         android:progressTint="@color/primary"
-                        android:thumbTint="@color/primary" />
+                        android:thumbTint="@color/secondary" />
 
                     <Spinner
                         android:id="@+id/spnPriority"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginTop="12dp"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="16dp"
                         android:background="@drawable/spinner_bg"
                         android:entries="@array/priority_options" />
 
@@ -225,9 +200,10 @@
                         style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="16dp"
                         android:text="+ Add Subject"
-                        android:textColor="@color/primary" />
+                        android:textColor="@color/secondary"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -235,11 +211,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="8dp"
-                android:text="My Subjects"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="12dp"
+                android:text="Subject List"
                 android:textColor="@color/on_surface"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -251,10 +227,11 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnGeneratePlan"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="24dp"
+                android:layout_height="64dp"
+                android:layout_marginTop="32dp"
                 android:text="Generate Schedule"
-                app:cornerRadius="12dp" />
+                app:backgroundTint="@color/secondary"
+                app:cornerRadius="16dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -264,7 +241,7 @@
         android:id="@+id/layoutDashboard"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="-20dp"
+        android:layout_marginTop="-30dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerBackground">
@@ -278,40 +255,41 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:strokeWidth="0dp">
+                app:cardCornerRadius="28dp"
+                app:cardElevation="16dp"
+                app:strokeColor="@color/glow_cyan"
+                app:strokeWidth="1.5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/primary"
+                    android:background="@color/surface"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="28dp">
 
                     <TextView
                         android:id="@+id/tvEfficiency"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Efficiency: 0%"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
+                        android:textColor="@color/secondary"
+                        android:textSize="32sp"
                         android:textStyle="bold" />
 
                     <ProgressBar
                         android:id="@+id/pbEfficiency"
                         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="8dp"
-                        android:layout_marginTop="12dp"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="20dp"
                         android:progress="0"
                         android:progressTint="@color/secondary"
-                        android:progressBackgroundTint="#40FFFFFF" />
+                        android:progressBackgroundTint="@color/surface_variant" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="24dp"
                         android:orientation="horizontal">
 
                         <TextView
@@ -320,7 +298,7 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:text="Planned: 0"
-                            android:textColor="#E0E7FF" />
+                            android:textColor="@color/text_secondary" />
 
                         <TextView
                             android:id="@+id/tvTotalCompleted"
@@ -328,8 +306,9 @@
                             android:layout_weight="1"
                             android:layout_height="wrap_content"
                             android:text="Done: 0"
-                            android:textColor="#E0E7FF"
-                            android:gravity="end" />
+                            android:textColor="@color/secondary"
+                            android:gravity="end"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -339,20 +318,92 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="16dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnReset"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="24dp"
-                android:text="Reset Planner"
-                android:textColor="@color/error"
-                app:strokeColor="@color/error"
-                app:cornerRadius="12dp" />
+                android:layout_marginTop="24dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Settings Overlay (Simulation) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/layoutSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:visibility="gone"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="24dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="@color/surface">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Configuration"
+                android:textColor="@color/on_surface"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="24dp"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Daily Study Goal (hrs)"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusTopStart="16dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSettingsSpareTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Max Subjects Per Day"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusTopStart="16dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSettingsMaxSubs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveSettings"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:text="Save Config"
+                app:cornerRadius="12dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnClearData"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Clear All Data"
+                android:textColor="@color/error" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
