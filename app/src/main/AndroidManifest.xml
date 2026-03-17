@@ -10,7 +10,9 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_schedify_logo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Schedify">
+        android:testOnly="false"
+        android:theme="@style/Theme.Schedify"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".MainActivity"
             android:exported="true">
