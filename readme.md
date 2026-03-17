@@ -1,4 +1,4 @@
-# 📅 Schedify – Smart Study Planner
+# Schedify – Smart Study Planner
 
 <p align="center">
   <b>A smart, constraint-based study planner that optimizes your schedule and boosts productivity 🚀</b>
@@ -11,9 +11,8 @@
   <img src="https://img.shields.io/badge/UI-Dark%20Glow-black?style=for-the-badge">
 </p>
 
----
 
-## 📸 Screenshots
+## Screenshots
 
 <p align="center">
   <img src="assets/home.png" width="250"/>
@@ -26,11 +25,10 @@
   <img src="assets/settings.png" width="250"/>
 </p>
 
----
 
-## 🚀 Features
+## Features
 
-### 🧭 Three-Tier Navigation
+### Three-Tier Navigation
 - **Home Screen** – Quick and clean entry point  
 - **Subject Manager** – Add subjects with:
   - Weekly study hours  
@@ -38,70 +36,60 @@
   - Priority (Low, Medium, High)  
 - **Dynamic Dashboard** – Auto-generated weekly schedule  
 
----
 
-### 🧠 Smart Scheduling Algorithm
+### Smart Scheduling Algorithm
 - Load = Weekly Hours × Difficulty × Priority Multiplier
 
 **Priority Multipliers:**
-- 🔴 High → 1.6  
-- 🟡 Medium → 1.3  
-- 🟢 Low → 1.0  
+- High → 1.6  
+- Medium → 1.3  
+- Low → 1.0  
 
 ✔ Prioritizes important and difficult subjects  
 ✔ Balances workload intelligently  
 
----
-
-### ⚙️ Constraint-Based Planning
+### Constraint-Based Planning
 - Daily Study Goal  
 - Max Subjects Per Day  
 - No repetition of same subject per day  
 
-👉 Prevents burnout and improves consistency  
+ Prevents burnout and improves consistency  
 
----
-
-### 📊 Efficiency Tracking
+### Efficiency Tracking
 - Efficiency (%) = (Completed Sessions / Total Sessions) × 100
 
 - Real-time updates  
 - Animated progress bar  
 - Productivity feedback loop  
 
----
-
-### 💾 Persistent Storage (SQLite)
+### Persistent Storage (SQLite)
 - Subjects  
 - Schedule  
 - Completion status  
 - User configurations  
 
----
 
-### 🌙 Modern UI – Dark Glow Theme
-- Neon accents ✨  
-- Smooth animations 🎯  
+### Modern UI – Dark Glow Theme
+- Neon accents   
+- Smooth animations   
 - Clean and aesthetic interface  
 
----
 
-## 📱 Installation
+## Installation
 
-👉 To install the app:
+To install the app:
 
 1. Click the link below  
 2. Download the APK  
 3. Install on your Android device  
 
-🔗 **Download Schedify**  
+ **Download Schedify**  
 https://tinyurl.com/Schedify  
 
-> ⚠️ Enable **"Install from Unknown Sources"** in settings.
+>  Enable **"Install from Unknown Sources"** in settings.
 
----
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Category | Technology |
 |--------|-----------|
@@ -111,9 +99,8 @@ https://tinyurl.com/Schedify
 | Animations | ObjectAnimator, TransitionManager |
 | Architecture | Modular Android |
 
----
 
-## ⚡ How It Works
+##  How It Works
 
 1. Add subjects with preferences  
 2. Set study constraints  
@@ -121,41 +108,33 @@ https://tinyurl.com/Schedify
 4. Track daily progress  
 5. Improve efficiency  
 
----
 
-## 🎯 Use Cases
 
-- 📚 Exam preparation  
-- ⏳ Time management  
-- 📈 Productivity tracking  
-- 🎓 Student planning  
+##  Use Cases
 
----
+- Exam preparation  
+- Time management  
+- Productivity tracking  
+- Student planning  
 
-## 🔮 Future Enhancements
 
-- 📊 Graphs & analytics  
-- ☁️ Firebase sync  
-- 🔔 Smart reminders  
-- 🤖 AI-based planning  
-- ⏱️ Pomodoro timer  
 
----
+## Future Enhancements
 
-## 🤝 Contributing
+- Graphs & analytics  
+- Firebase sync  
+- Smart reminders  
+- AI-based planning  
+- Pomodoro timer  
 
-Contributions are welcome!  
-Feel free to fork and improve Schedify 🚀  
 
----
-
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
----
 
-## 👨‍💻 Author
+
+## Author
 
 **Prasanna**
 
